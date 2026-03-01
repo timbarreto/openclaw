@@ -178,11 +178,11 @@ describe("tilde expansion in file tools", () => {
   it("expandHomePrefix respects process.env.HOME changes", async () => {
     const { expandHomePrefix } = await import("./home-dir.js");
     const originalHome = process.env.HOME;
-    const fakeHome = "/tmp/fake-home-test";
+    const fakeHome = path.resolve(path.sep, "tmp", "fake-home-test");
     process.env.HOME = fakeHome;
     try {
       const result = expandHomePrefix("~/file.txt");
-      expect(result).toBe(path.join(fakeHome, "file.txt"));
+      expect(path.normalize(result)).toBe(path.normalize(path.join(fakeHome, "file.txt")));
     } finally {
       process.env.HOME = originalHome;
     }
