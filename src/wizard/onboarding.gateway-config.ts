@@ -7,7 +7,7 @@ import {
   randomToken,
   validateGatewayPasswordInput,
 } from "../commands/onboard-helpers.js";
-import type { GatewayAuthChoice } from "../commands/onboard-types.js";
+import type { GatewayAuthChoice, SecretInputMode } from "../commands/onboard-types.js";
 import type { GatewayBindMode, GatewayTailscaleMode, OpenClawConfig } from "../config/config.js";
 import type { SecretInput } from "../config/types.secrets.js";
 import {
@@ -45,6 +45,7 @@ type ConfigureGatewayOptions = {
   nextConfig: OpenClawConfig;
   localPort: number;
   quickstartGateway: QuickstartGatewayDefaults;
+  secretInputMode?: SecretInputMode;
   prompter: WizardPrompter;
   runtime: RuntimeEnv;
 };
@@ -194,6 +195,7 @@ export async function configureGatewayForOnboarding(
     if (!password) {
       const selectedMode = await resolveSecretInputModeForEnvSelection({
         prompter,
+        explicitMode: opts.secretInputMode,
         copy: {
           modeMessage: "How do you want to provide the gateway password?",
           plaintextLabel: "Enter password now",

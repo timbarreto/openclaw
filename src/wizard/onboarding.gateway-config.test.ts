@@ -136,4 +136,40 @@ describe("configureGatewayForOnboarding", () => {
       "http://127.0.0.1:18789",
     ]);
   });
+
+  it("honors secretInputMode=ref for gateway password prompts", async () => {
+    const previous = process.env.OPENCLAW_GATEWAY_PASSWORD;
+    process.env.OPENCLAW_GATEWAY_PASSWORD = "gateway-secret";
+    try {
+      const prompter = createPrompter({
+        selectQueue: ["loopback", "password", "off", "env"],
+        textQueue: ["18789", "OPENCLAW_GATEWAY_PASSWORD"],
+      });
+      const runtime = createRuntime();
+
+      const result = await configureGatewayForOnboarding({
+        flow: "advanced",
+        baseConfig: {},
+        nextConfig: {},
+        localPort: 18789,
+        quickstartGateway: createQuickstartGateway("password"),
+        secretInputMode: "ref",
+        prompter,
+        runtime,
+      });
+
+      expect(result.nextConfig.gateway?.auth?.mode).toBe("password");
+      expect(result.nextConfig.gateway?.auth?.password).toEqual({
+        source: "env",
+        provider: "default",
+        id: "OPENCLAW_GATEWAY_PASSWORD",
+      });
+    } finally {
+      if (previous === undefined) {
+        delete process.env.OPENCLAW_GATEWAY_PASSWORD;
+      } else {
+        process.env.OPENCLAW_GATEWAY_PASSWORD = previous;
+      }
+    }
+  });
 });
