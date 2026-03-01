@@ -12,6 +12,7 @@ Interpret `$ARGUMENTS` as one of:
     -v "$HOME/.openclaw/docker-workspace:/home/node/.openclaw/workspace" \
     -p 18789:18789 -p 18790:18790 \
     --init --restart unless-stopped \
+    --entrypoint /home/node/.openclaw/entrypoint.sh \
     openclaw:local \
     node openclaw.mjs gateway --allow-unconfigured --bind lan --port 18789
   ```
@@ -24,7 +25,7 @@ Interpret `$ARGUMENTS` as one of:
 - **shell**: `docker exec -it openclaw-docker bash`
 - **rebuild**: Build the image from repo root (`docker build -t openclaw:local .`), then stop/remove/recreate the container (re-read key from `.env`)
 - **send <message>**: `docker exec openclaw-docker node openclaw.mjs message send "<message>"`
-- **url**: Print the dashboard URL: `http://localhost:18789/?token=change-me-to-a-long-random-token`
+- **url**: Print the dashboard URL: `http://localhost:18789/?token=efa245dd953fa91bdfa7c6715fc75f3ffc1b431a432668bf812ebdb525ae46d7`
 
 If no argument is given, show the container status.
 
