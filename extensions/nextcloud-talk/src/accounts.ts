@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
+import { normalizeSecretInputString } from "./secret-input.js";
 import type { CoreConfig, NextcloudTalkAccountConfig } from "./types.js";
 
 function isTruthyEnvValue(value?: string): boolean {
@@ -104,8 +105,9 @@ function resolveNextcloudTalkSecret(
     }
   }
 
-  if (merged.botSecret?.trim()) {
-    return { secret: merged.botSecret.trim(), source: "config" };
+  const inlineSecret = normalizeSecretInputString(merged.botSecret);
+  if (inlineSecret) {
+    return { secret: inlineSecret, source: "config" };
   }
 
   return { secret: "", source: "none" };

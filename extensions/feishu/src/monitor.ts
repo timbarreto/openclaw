@@ -12,6 +12,7 @@ import { handleFeishuMessage, type FeishuMessageEvent, type FeishuBotAddedEvent 
 import { handleFeishuCardAction, type FeishuCardActionEvent } from "./card-action.js";
 import { createFeishuWSClient, createEventDispatcher } from "./client.js";
 import { probeFeishu } from "./probe.js";
+import { normalizeSecretInputString } from "./secret-input.js";
 import { getMessageFeishu } from "./send.js";
 import type { ResolvedFeishuAccount } from "./types.js";
 
@@ -396,7 +397,7 @@ async function monitorSingleAccount(params: MonitorAccountParams): Promise<void>
   log(`feishu[${accountId}]: bot open_id resolved: ${botOpenId ?? "unknown"}`);
 
   const connectionMode = account.config.connectionMode ?? "websocket";
-  if (connectionMode === "webhook" && !account.verificationToken?.trim()) {
+  if (connectionMode === "webhook" && !normalizeSecretInputString(account.verificationToken)) {
     throw new Error(`Feishu account "${accountId}" webhook mode requires verificationToken`);
   }
   const eventDispatcher = createEventDispatcher(account);
